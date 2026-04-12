@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Blood Bank Management System</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #b40000; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 5px 10px; margin: 2px; text-decoration: none; color: white; border: none; cursor: pointer; }
+        .btn-add { background-color: #4CAF50; }
+        .btn-edit { background-color: #2196F3; }
+        .btn-delete { background-color: #f44336; }
+        .search-form { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Blood Bank Management System</h1>
+
+    <div class="search-form">
+        <form th:action="@{/donors}" method="get">
+            <label for="bloodGroup">Search by Blood Group:</label>
+            <select name="bloodGroup" id="bloodGroup">
+                <option value="">All</option>
+                <option value="A+">A+</option>
+                <option value="A-">A-</option>
+                <option value="B+">B+</option>
+                <option value="B-">B-</option>
+                <option value="AB+">AB+</option>
+                <option value="AB-">AB-</option>
+                <option value="O+">O+</option>
+                <option value="O-">O-</option>
+            </select>
+            <button type="submit">Search</button>
+        </form>
+        <a href="/donors" class="btn">Show All</a>
+    </div>
+
+    <a href="/donors/add" class="btn btn-add">Add New Donor</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Father Name</th>
+                <th>Email</th>
+                <th>Blood Group</th>
+                <th>Contact</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="donor : ${donors}">
+                <td th:text="${donor.name}"></td>
+                <td th:text="${donor.fatherName}"></td>
+                <td th:text="${donor.email}"></td>
+                <td th:text="${donor.bloodGroup}"></td>
+                <td th:text="${donor.contact}"></td>
+                <td>
+                    <a th:href="@{/donors/edit/{id}(id=${donor.id})}" class="btn btn-edit">Edit</a>
+                    <a th:href="@{/donors/delete/{id}(id=${donor.id})}" class="btn btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

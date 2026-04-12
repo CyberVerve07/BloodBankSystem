@@ -1,16 +1,16 @@
-A desktop-based Blood Bank Management System built using Java Swing that allows efficient management of blood donors with persistent storage, validation, and a clean user interface.
+A full-stack Blood Bank Management System built using Spring Boot that allows efficient management of blood donors with database storage, validation, and a web-based user interface.
 
-This project is designed for college-level projects, resume showcasing, and core Java practice, focusing on OOP concepts, Swing UI, and file handling.
+This project is designed for college-level projects, resume showcasing, and full-stack Java development practice, focusing on Spring Boot, JPA, Thymeleaf, and database integration.
 
 📌 Features
 
 Add new blood donors with complete details
 
-Store donor information persistently (data is saved even after closing the app)
+Store donor information in H2 database (persistent across restarts)
 
 Update existing donor records
 
-Delete donors safely using unique identifiers
+Delete donors safely
 
 Search donors by blood group
 
@@ -22,9 +22,9 @@ Contact number (10 digits)
 
 Duplicate donors (email & contact)
 
-Clean and user-friendly UI
+Web-based user interface using Thymeleaf
 
-Single-file implementation (no modules, no packages)
+RESTful architecture with MVC pattern
 
 🧾 Donor Details Stored
 
@@ -40,30 +40,41 @@ Blood Group
 
 Contact Number
 
-Auto-generated Unique ID (UUID – internal use)
+Auto-generated Unique ID
 
 🛠 Tech Stack
 
-Language: Java
+Language: Java 17
 
-UI Framework: Java Swing
+Framework: Spring Boot
 
-Data Storage: File-based persistence using Serialization
+Web Framework: Spring MVC
+
+Template Engine: Thymeleaf
+
+Database: H2 (in-memory, with console access)
+
+ORM: JPA/Hibernate
+
+Validation: Bean Validation
+
+Build Tool: Maven
 
 Core Concepts Used:
 
-OOP (Classes, Objects, Encapsulation)
+Spring Dependency Injection
 
-Collections (ArrayList)
+JPA Repositories
+
+Thymeleaf Templates
+
+MVC Architecture
+
+Bean Validation
 
 Exception Handling
 
-File I/O
-
-Event Handling
-
-UUID for safe record management
-
+Database Transactions
 
 ✅ Validation Rules
 
@@ -79,22 +90,46 @@ Duplicate donors (same email or contact) are not allowed
 
 This application can be used as:
 
-A college mini-project
+A full-stack Java web development project
 
-A core Java + Swing practice project
+A Spring Boot practice project
 
-A resume project demonstrating GUI + persistence
+A resume project demonstrating web development, database integration, and validation
 
-A base for further upgrades (database, web, REST API)
+A base for further enhancements (authentication, REST APIs, microservices)
+
+🚀 Getting Started
+
+Prerequisites:
+
+Java 17 or higher
+
+Maven 3.6+
+
+Steps:
+
+1. Clone the repository
+
+2. Navigate to the project directory
+
+3. Run `mvn clean install`
+
+4. Run `mvn spring-boot:run`
+
+5. Open browser and go to http://localhost:8080/donors
+
+H2 Console: http://localhost:8080/h2-console (JDBC URL: jdbc:h2:mem:testdb, username: sa, password: )
 
 🚀 Possible Future Enhancements
 
-MySQL / JDBC integration
+User authentication and authorization
 
-JavaFX UI
+REST API endpoints for mobile apps
 
-Export donor list to CSV
+MySQL/PostgreSQL integration
 
-Dark mode UI
+Frontend with React/Angular
 
-Spring Boot backend with REST APIs
+Docker containerization
+
+CI/CD pipeline
