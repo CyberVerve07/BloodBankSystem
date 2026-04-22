@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Donation</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #b40000; }
+        .form-group { margin-bottom: 15px; }
+        label { display: block; margin-bottom: 5px; }
+        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px; }
+        .btn { padding: 10px 15px; margin: 5px; text-decoration: none; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        .btn-submit { background-color: #4CAF50; }
+        .btn-cancel { background-color: #f44336; }
+        .error { color: red; }
+        .donor-info { background-color: #f9f9f9; padding: 10px; margin-bottom: 20px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Edit Donation</h1>
+
+    <div class="donor-info">
+        <h2 th:text="'For Donor: ' + ${donation.donor.name}"></h2>
+        <p><strong>Blood Group:</strong> <span th:text="${donation.donor.bloodGroup}"></span></p>
+    </div>
+
+    <form th:action="@{/donations/edit/{id}(id=${donation.id})}" method="post" th:object="${donation}">
+        <input type="hidden" th:field="*{donor.id}" />
+
+        <div class="form-group">
+            <label for="donationDate">Donation Date:</label>
+            <input type="date" th:field="*{donationDate}" required />
+        </div>
+
+        <div class="form-group">
+            <label for="amount">Amount (ml):</label>
+            <input type="number" th:field="*{amount}" min="1" max="500" required />
+        </div>
+
+        <div class="form-group">
+            <label for="bloodGroup">Blood Group:</label>
+            <input type="text" th:field="*{bloodGroup}" readonly />
+        </div>
+
+        <div class="form-group">
+            <label for="notes">Notes:</label>
+            <textarea th:field="*{notes}" rows="3"></textarea>
+        </div>
+
+        <div th:if="${error}" class="error" th:text="${error}"></div>
+
+        <button type="submit" class="btn btn-submit">Update Donation</button>
+        <a th:href="@{/donations/donor/{id}(id=${donation.donor.id})}" class="btn btn-cancel">Cancel</a>
+    </form>
+</body>
+</html>

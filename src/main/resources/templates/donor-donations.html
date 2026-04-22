@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Donation History</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        h1 { color: #b40000; }
+        h2 { color: #333; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .btn { padding: 5px 10px; margin: 2px; text-decoration: none; color: white; border: none; cursor: pointer; }
+        .btn-add { background-color: #4CAF50; }
+        .btn-edit { background-color: #2196F3; }
+        .btn-delete { background-color: #f44336; }
+        .btn-back { background-color: #9E9E9E; }
+        .donor-info { background-color: #f9f9f9; padding: 10px; margin-bottom: 20px; border-radius: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Donation History</h1>
+
+    <div class="donor-info">
+        <h2 th:text="'Donor: ' + ${donor.name}"></h2>
+        <p><strong>Father Name:</strong> <span th:text="${donor.fatherName}"></span></p>
+        <p><strong>Email:</strong> <span th:text="${donor.email}"></span></p>
+        <p><strong>Blood Group:</strong> <span th:text="${donor.bloodGroup}"></span></p>
+        <p><strong>Contact:</strong> <span th:text="${donor.contact}"></span></p>
+    </div>
+
+    <a th:href="@{/donations/add/{id}(id=${donor.id})}" class="btn btn-add">Add New Donation</a>
+    <a href="/donors" class="btn btn-back">Back to Donors</a>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Amount (ml)</th>
+                <th>Blood Group</th>
+                <th>Notes</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="donation : ${donations}">
+                <td th:text="${#temporals.format(donation.donationDate, 'yyyy-MM-dd')}"></td>
+                <td th:text="${donation.amount}"></td>
+                <td th:text="${donation.bloodGroup}"></td>
+                <td th:text="${donation.notes}"></td>
+                <td>
+                    <a th:href="@{/donations/edit/{id}(id=${donation.id})}" class="btn btn-edit">Edit</a>
+                    <a th:href="@{/donations/delete/{id}(id=${donation.id})}" class="btn btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
+                </td>
+            </tr>
+            <tr th:if="${#lists.isEmpty(donations)}">
+                <td colspan="5" style="text-align: center;">No donations recorded yet.</td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

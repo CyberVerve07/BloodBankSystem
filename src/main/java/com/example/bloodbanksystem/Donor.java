@@ -3,6 +3,8 @@ package com.example.bloodbanksystem;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.util.List;
+
 @Entity
 @Table(name = "donors")
 public class Donor {
@@ -29,6 +31,9 @@ public class Donor {
     @NotBlank(message = "Contact is required")
     @Pattern(regexp = "\\d{10}", message = "Contact must be 10 digits")
     private String contact;
+
+    @OneToMany(mappedBy = "donor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Donation> donations;
 
     // Constructors
     public Donor() {}
@@ -59,4 +64,7 @@ public class Donor {
 
     public String getContact() { return contact; }
     public void setContact(String contact) { this.contact = contact; }
+
+    public List<Donation> getDonations() { return donations; }
+    public void setDonations(List<Donation> donations) { this.donations = donations; }
 }

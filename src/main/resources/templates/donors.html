@@ -60,6 +60,7 @@
                 <td th:text="${donor.contact}"></td>
                 <td>
                     <a th:href="@{/donors/edit/{id}(id=${donor.id})}" class="btn btn-edit">Edit</a>
+                    <a th:href="@{/donations/donor/{id}(id=${donor.id})}" class="btn" style="background-color: #FF9800;">Donations</a>
                     <a th:href="@{/donors/delete/{id}(id=${donor.id})}" class="btn btn-delete" onclick="return confirm('Are you sure?')">Delete</a>
                 </td>
             </tr>
