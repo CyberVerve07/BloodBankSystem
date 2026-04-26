@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donation History | Blood Bank System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>Donation History</h1>
+        
+        <div class="glass-card" style="margin-bottom: 20px; border-left: 4px solid var(--primary);">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                <div>
+                    <h2 style="color: var(--primary-light); font-weight: 700;" th:text="${donor.name}"></h2>
+                    <p style="color: var(--text-secondary); margin-top: 5px;">
+                        <span th:text="${donor.bloodGroup}" class="blood-badge"></span> • 
+                        <span th:text="${donor.email}"></span> • 
+                        <span th:text="${donor.contact}"></span>
+                    </p>
+                </div>
+                <div style="text-align: right;">
+                    <p style="font-size: 0.8rem; color: var(--text-secondary);">Father's Name</p>
+                    <p th:text="${donor.fatherName}"></p>
+                </div>
+            </div>
+        </div>
+
+        <div class="glass-card">
+            <div class="toolbar">
+                <h3 style="font-weight: 600;">Recent Contributions</h3>
+                <div style="display: flex; gap: 10px;">
+                    <a th:href="@{/donations/add/{id}(id=${donor.id})}" class="btn btn-primary btn-sm">+ Add Donation</a>
+                    <a href="/donors" class="btn btn-secondary btn-sm">Back to List</a>
+                </div>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Amount (ml)</th>
+                            <th>Blood Group</th>
+                            <th>Notes</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="donation : ${donations}">
+                            <td style="font-weight: 600;" th:text="${#temporals.format(donation.donationDate, 'yyyy-MM-dd')}"></td>
+                            <td th:text="${donation.amount} + ' ml'"></td>
+                            <td><span class="blood-badge" th:text="${donation.bloodGroup}"></span></td>
+                            <td style="color: var(--text-secondary); font-size: 0.9rem;" th:text="${donation.notes}"></td>
+                            <td>
+                                <div class="actions-cell">
+                                    <a th:href="@{/donations/edit/{id}(id=${donation.id})}" class="btn btn-secondary btn-sm">Edit</a>
+                                    <a th:href="@{/donations/delete/{id}(id=${donation.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this donation record?')">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(donations)}">
+                            <td colspan="5" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No donation records found for this donor.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="footer">
+            History of life-saving contributions.
+        </div>
+    </div>
+</body>
+</html>

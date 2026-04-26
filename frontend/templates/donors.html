@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Donors | Blood Bank System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+</head>
+<body>
+    <div class="container">
+        <h1>Blood Bank Management</h1>
+        
+        <div class="glass-card">
+            <div class="toolbar">
+                <div class="search-form">
+                    <input type="text" id="liveSearch" placeholder="Live search donors..." class="form-control" style="width: 250px;">
+                    <form th:action="@{/donors}" method="get" style="display: flex; gap: 10px; align-items: center;">
+                        <select name="bloodGroup" id="bloodGroup">
+                            <option value="">All Groups</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                        <button type="submit" class="btn btn-secondary btn-sm">Search</button>
+                        <a href="/donors" class="btn btn-secondary btn-sm" th:if="${param.bloodGroup != null}">Clear</a>
+                    </form>
+                </div>
+                <a href="/donors/add" class="btn btn-primary">
+                    <span style="margin-right: 8px;">+</span> Add New Donor
+                </a>
+            </div>
+
+            <div style="overflow-x: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Donor Name</th>
+                            <th>Father's Name</th>
+                            <th>Email Address</th>
+                            <th>Blood Group</th>
+                            <th>Contact</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="donor : ${donors}">
+                            <td>
+                                <div style="font-weight: 600;" th:text="${donor.name}"></div>
+                            </td>
+                            <td th:text="${donor.fatherName}"></td>
+                            <td style="color: var(--text-secondary); font-size: 0.9rem;" th:text="${donor.email}"></td>
+                            <td>
+                                <span class="blood-badge" th:text="${donor.bloodGroup}"></span>
+                            </td>
+                            <td th:text="${donor.contact}"></td>
+                            <td>
+                                <div class="actions-cell">
+                                    <a th:href="@{/donors/edit/{id}(id=${donor.id})}" class="btn btn-secondary btn-sm">Edit</a>
+                                    <a th:href="@{/donations/donor/{id}(id=${donor.id})}" class="btn btn-info btn-sm">Donations</a>
+                                    <a th:href="@{/donors/delete/{id}(id=${donor.id})}" class="btn btn-danger btn-sm" onclick="return confirm('Delete this donor record?')">Delete</a>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr th:if="${#lists.isEmpty(donors)}">
+                            <td colspan="6" style="text-align: center; padding: 40px; color: var(--text-secondary);">
+                                No donors found matching your criteria.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        
+        <div class="footer">
+            &copy; 2026 Blood Bank Management System • Built with Premium Aesthetics
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('liveSearch').addEventListener('keyup', function() {
+            const query = this.value.toLowerCase();
+            const rows = document.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const text = row.innerText.toLowerCase();
+                row.style.display = text.includes(query) ? '' : 'none';
+            });
+        });
+    </script>
+</body>
+</html>

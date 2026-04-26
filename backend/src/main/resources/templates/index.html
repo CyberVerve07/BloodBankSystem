@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home | Blood Bank System</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .hero {
+            text-align: center;
+            padding: 60px 20px;
+            animation: fadeIn 1s ease-out;
+        }
+        .hero h1 {
+            font-size: 3.5rem;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1.5fr 1fr;
+            gap: 30px;
+            margin-top: 40px;
+        }
+        @media (max-width: 900px) {
+            .dashboard-grid { grid-template-columns: 1fr; }
+        }
+        .chart-container {
+            height: 350px;
+            position: relative;
+        }
+        .tool-box {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .compat-result {
+            margin-top: 20px;
+            padding: 15px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 12px;
+            display: none;
+            animation: slideIn 0.3s ease-out;
+        }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateX(-10px); }
+            to { opacity: 1; transform: translateX(0); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="hero">
+            <h1>Save a Life,<br><span style="color: white;">Give Blood.</span></h1>
+            <p>Your small contribution can make a massive difference. Manage donors and track life-saving donations.</p>
+            
+            <div class="cta-group">
+                <a href="/donors" class="btn btn-primary" style="padding: 15px 40px;">Explore Donors</a>
+                <a href="/donors/add" class="btn btn-secondary" style="padding: 15px 40px;">Register Now</a>
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+            <!-- Blood Analytics Chart -->
+            <div class="glass-card">
+                <h3 style="margin-bottom: 20px;">Donor Analytics</h3>
+                <div class="chart-container">
+                    <canvas id="bloodChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Blood Compatibility Tool -->
+            <div class="glass-card">
+                <h3 style="margin-bottom: 20px;">Compatibility Tool</h3>
+                <div class="tool-box">
+                    <div class="form-group">
+                        <label>Select Blood Group</label>
+                        <select id="checkerGroup" class="form-control" onchange="checkCompatibility()">
+                            <option value="">-- Choose Group --</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                        </select>
+                    </div>
+                    <div id="compatOutput" class="compat-result">
+                        <div style="margin-bottom: 10px;">
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; display: block;">Can Donate To:</span>
+                            <span id="donateTo" style="font-weight: 700; color: #4caf50;"></span>
+                        </div>
+                        <div>
+                            <span style="color: var(--text-secondary); font-size: 0.8rem; display: block;">Can Receive From:</span>
+                            <span id="receiveFrom" style="font-weight: 700; color: #2196f3;"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Access -->
+        <div class="glass-card" style="margin-top: 30px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                <div style="text-align: center;">
+                    <span style="font-size: 2rem; color: var(--primary-light);" th:text="${donorCount}">0</span>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase;">Total Donors</p>
+                </div>
+                <div style="text-align: center;">
+                    <span style="font-size: 2rem; color: var(--primary-light);" th:text="${totalDonations}">0</span>
+                    <p style="font-size: 0.8rem; color: var(--text-secondary); text-transform: uppercase;">Total Donations</p>
+                </div>
+                <a href="/donors" class="btn btn-secondary btn-sm" style="height: fit-content;">View List</a>
+                <a href="/h2-console" target="_blank" class="btn btn-secondary btn-sm" style="height: fit-content;">Database</a>
+            </div>
+        </div>
+
+        <div class="footer">
+            &copy; 2026 Blood Bank System • Built with Premium JS Features
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        /* Blood Group Distribution Data from Spring Boot */
+        const bloodData = /*[[${bloodGroupData}]]*/ {};
+        
+        // Render Chart
+        const ctx = document.getElementById('bloodChart').getContext('2d');
+        const labels = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+        const values = labels.map(l => bloodData[l] || 0);
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: labels,
+                datasets: [{
+                    label: 'Number of Donors',
+                    data: values,
+                    backgroundColor: 'rgba(255, 95, 82, 0.6)',
+                    borderColor: '#ff5f52',
+                    borderWidth: 1,
+                    borderRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#b0bec5' } },
+                    x: { grid: { display: false }, ticks: { color: '#b0bec5' } }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+
+        // Compatibility Tool Logic
+        const compatibilityMap = {
+            'A+': { donate: 'A+, AB+', receive: 'A+, A-, O+, O-' },
+            'A-': { donate: 'A+, A-, AB+, AB-', receive: 'A-, O-' },
+            'B+': { donate: 'B+, AB+', receive: 'B+, B-, O+, O-' },
+            'B-': { donate: 'B+, B-, AB+, AB-', receive: 'B-, O-' },
+            'AB+': { donate: 'AB+', receive: 'Everyone' },
+            'AB-': { donate: 'AB+, AB-', receive: 'AB-, A-, B-, O-' },
+            'O+': { donate: 'O+, A+, B+, AB+', receive: 'O+, O-' },
+            'O-': { donate: 'Everyone', receive: 'O-' }
+        };
+
+        function checkCompatibility() {
+            const group = document.getElementById('checkerGroup').value;
+            const output = document.getElementById('compatOutput');
+            if (group) {
+                document.getElementById('donateTo').innerText = compatibilityMap[group].donate;
+                document.getElementById('receiveFrom').innerText = compatibilityMap[group].receive;
+                output.style.display = 'block';
+            } else {
+                output.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>
+
