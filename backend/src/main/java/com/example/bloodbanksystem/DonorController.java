@@ -1,89 +1,76 @@
 package com.example.bloodbanksystem;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import jakarta.validation.Valid;
 import java.util.List;
+import java.util.Map;
 
-@Controller
-@RequestMapping("/donors")
+@RestController
+@RequestMapping("/api/donors")
 public class DonorController {
 
     private final DonorService donorService;
+    private final DonationService donationService;
 
-    public DonorController(DonorService donorService) {
+    public DonorController(DonorService donorService, DonationService donationService) {
         this.donorService = donorService;
+        this.donationService = donationService;
     }
 
     @GetMapping
-    public String listDonors(@RequestParam(value = "bloodGroup", required = false) String bloodGroup, Model model) {
+    public ResponseEntity<List<Donor>> listDonors(
+            @RequestParam(value = "bloodGroup", required = false) String bloodGroup) {
         List<Donor> donors;
         if (bloodGroup != null && !bloodGroup.isEmpty()) {
             donors = donorService.searchByBloodGroup(bloodGroup.toUpperCase());
         } else {
             donors = donorService.getAllDonors();
         }
-        model.addAttribute("donors", donors);
-        model.addAttribute("donor", new Donor()); // for form
-        return "donors";
+        return ResponseEntity.ok(donors);
     }
 
-    @GetMapping("/add")
-    public String showAddForm(Model model) {
-        model.addAttribute("donor", new Donor());
-        return "add-donor";
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getDonor(@PathVariable Long id) {
+        return donorService.getDonorById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping("/add")
-    public String addDonor(@Valid @ModelAttribute("donor") Donor donor, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "add-donor";
-        }
+    @GetMapping("/{id}/eligibility")
+    public ResponseEntity<?> checkEligibility(@PathVariable Long id) {
+        boolean eligible = donationService.isDonorEligible(id);
+        var nextDate = donationService.getNextEligibleDate(id);
+        return ResponseEntity.ok(Map.of(
+            "eligible", eligible,
+            "nextEligibleDate", nextDate.toString()
+        ));
+    }
+
+    @PostMapping
+    public ResponseEntity<?> addDonor(@Valid @RequestBody Donor donor) {
         try {
-            donorService.saveDonor(donor);
+            Donor saved = donorService.saveDonor(donor);
+            return ResponseEntity.ok(saved);
         } catch (IllegalArgumentException e) {
-            model.addAttribute("error", e.getMessage());
-            return "add-donor";
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
-        return "redirect:/donors";
     }
 
-    @GetMapping("/edit/{id}")
-    public String showEditForm(@PathVariable Long id, Model model) {
-        Donor donor = donorService.getDonorById(id).orElseThrow(() -> new IllegalArgumentException("Invalid donor Id:" + id));
-        model.addAttribute("donor", donor);
-        return "edit-donor";
-    }
-
-    @PostMapping("/edit/{id}")
-    public String updateDonor(@PathVariable Long id, @Valid @ModelAttribute("donor") Donor donor, BindingResult result, Model model) {
-        if (result.hasErrors()) {
-            return "edit-donor";
-        }
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateDonor(@PathVariable Long id, @Valid @RequestBody Donor donor) {
         try {
-            donorService.updateDonor(id, donor);
+            Donor updated = donorService.updateDonor(id, donor);
+            return ResponseEntity.ok(updated);
         } catch (IllegalArgumentException e) {
-            model.addAttribute("error", e.getMessage());
-            return "edit-donor";
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
-        return "redirect:/donors";
     }
 
-    @GetMapping("/delete/{id}")
-    public String deleteDonor(@PathVariable Long id) {
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteDonor(@PathVariable Long id) {
         donorService.deleteDonor(id);
-        return "redirect:/donors";
-    }
-
-    @GetMapping("/search")
-    public String search(@RequestParam String bloodGroup, Model model) {
-        List<Donor> donors = donorService.searchByBloodGroup(bloodGroup.toUpperCase());
-        model.addAttribute("donors", donors);
-        model.addAttribute("donor", new Donor());
-        return "donors";
+        return ResponseEntity.ok(Map.of("message", "Donor deleted successfully"));
     }
 }
