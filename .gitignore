@@ -1,22 +1,45 @@
-# Maven
-backend/target/
-backend/*.jar
-backend/*.war
+# Target folders
+target/
+bin/
+build/
+dist/
+out/
 
-# IDEs
+# Node modules
+node_modules/
+.npm/
+
+# IDE settings
 .idea/
 .vscode/
+*.swp
+*.swo
+*.DS_Store
 *.iml
-backend/*.iml
 
-# Data
-backend/donors.dat
-*.db
+# Environment variables
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 
-# OS
-.DS_Store
+# Maven
+.m2/
+release.properties
+pom.xml.releaseBackup
+pom.xml.tagNextRelease
+pom.xml.nextSnapshot
+pom.xml.backup
+
+# Logs
+*.log
+logs/
+
+# Database
+*.mv.db
+*.trace.db
+
+# OS files
 Thumbs.db
-
-# Maven Binaries
-backend/apache-maven-3.9.6/
-maven.zip
+desktop.ini
