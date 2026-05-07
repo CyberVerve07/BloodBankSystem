@@ -2,7 +2,7 @@ package com.example.bloodbanksystem;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDate;
 
 @Entity
@@ -13,8 +13,9 @@ public class Donation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "donor_id", nullable = false)
+    @JsonIgnoreProperties({"donations"})
     private Donor donor;
 
     @NotNull(message = "Donation date is required")
@@ -29,6 +30,14 @@ public class Donation {
     private String bloodGroup;
 
     private String notes;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private DonationStatus status = DonationStatus.COMPLETED;
+
+    public enum DonationStatus {
+        COMPLETED, REJECTED, PENDING
+    }
 
     // Constructors
     public Donation() {}
@@ -59,4 +68,7 @@ public class Donation {
 
     public String getNotes() { return notes; }
     public void setNotes(String notes) { this.notes = notes; }
+
+    public DonationStatus getStatus() { return status; }
+    public void setStatus(DonationStatus status) { this.status = status; }
 }
