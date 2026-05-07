@@ -2,7 +2,6 @@ package com.example.bloodbanksystem;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
-
 import java.util.List;
 
 @Entity
@@ -22,6 +21,7 @@ public class Donor {
 
     @NotBlank(message = "Email is required")
     @Email(message = "Invalid email format")
+    @Column(unique = true)
     private String email;
 
     @NotBlank(message = "Blood group is required")
@@ -30,9 +30,13 @@ public class Donor {
 
     @NotBlank(message = "Contact is required")
     @Pattern(regexp = "\\d{10}", message = "Contact must be 10 digits")
+    @Column(unique = true)
     private String contact;
 
+    private String address;
+
     @OneToMany(mappedBy = "donor", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private List<Donation> donations;
 
     // Constructors
@@ -64,6 +68,9 @@ public class Donor {
 
     public String getContact() { return contact; }
     public void setContact(String contact) { this.contact = contact; }
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
 
     public List<Donation> getDonations() { return donations; }
     public void setDonations(List<Donation> donations) { this.donations = donations; }
