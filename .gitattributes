@@ -1,0 +1,10 @@
+# Ignore HTML files from language statistics
+*.html linguist-detectable=false
+*.html linguist-documentation=false
+
+# Specific frontend assets
+frontend-react/index.html linguist-detectable=false
+
+# Treat .jsx and .js as primary code
+*.jsx linguist-detectable=true
+*.js linguist-detectable=true
