@@ -7,6 +7,7 @@ import Donors from './pages/Donors';
 import Donations from './pages/Donations';
 import Inventory from './pages/Inventory';
 import Requests from './pages/Requests';
+import Camps from './pages/Camps';
 import './index.css';
 
 function ProtectedLayout() {
@@ -42,6 +43,7 @@ export default function App() {
             <Route path="/donations" element={<Donations />} />
             <Route path="/inventory" element={<Inventory />} />
             <Route path="/requests" element={<Requests />} />
+            <Route path="/camps" element={<Camps />} />
           </Route>
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

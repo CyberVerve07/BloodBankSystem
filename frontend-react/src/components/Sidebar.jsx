@@ -2,7 +2,7 @@ import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../AuthContext';
 import { 
   LayoutDashboard, Users, Droplets, ClipboardList, 
-  Package, LogOut, Heart
+  Package, LogOut, Heart, MapPin
 } from 'lucide-react';
 
 export default function Sidebar() {
@@ -20,6 +20,7 @@ export default function Sidebar() {
     { to: '/donations', icon: <Droplets size={18} />, label: 'Donations' },
     { to: '/inventory', icon: <Package size={18} />, label: 'Inventory' },
     { to: '/requests', icon: <ClipboardList size={18} />, label: 'Blood Requests' },
+    { to: '/camps', icon: <MapPin size={18} />, label: 'Donation Camps' },
   ];
 
   return (
